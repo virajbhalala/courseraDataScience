@@ -1,0 +1,94 @@
+---
+title: "course 6 proj part 2"
+author: "Viraj Bhalala"
+date: "April 23, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(datasets)
+data(ToothGrowth)
+```
+
+## Course 6 project part 2
+
+
+we're going to analyze the ToothGrowth data in the R datasets package.
+
+1. Load the ToothGrowth data and perform some basic exploratory data analyses
+2. Provide a basic summary of the data.
+3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+4. State your conclusions and the assumptions needed for your conclusions.
+
+```{r cars}
+library(datasets)
+data(ToothGrowth)
+library(ggplot2)
+ggplot(ToothGrowth, aes(x=factor(dose), y=len, fill=factor(dose)))+geom_boxplot()+facet_grid(.~supp)+ggtitle("Analyzing ToothGrowth data")
+
+
+
+```
+
+```{r summary}
+summary(ToothGrowth)
+
+
+```
+
+
+
+```{r calculate CI}
+xBar<-mean(ToothGrowth$len[1:30])
+yBar<-mean(ToothGrowth$len[31:60])
+xVar<-(sd(ToothGrowth$len[1:30]))^2
+yVar<-(sd(ToothGrowth$len[31:60]))^2
+q<-(((xVar+yVar)/30)^2)/((((xVar/30)^2)+((yVar/30)^2))/29)
+t<-qt(0.975, q)
+yBar -xBar + c(-1,1)*t*sqrt(xVar/30 + yVar/30)
+
+
+```
+
+
+Perform Hypothesis test
+
+
+```{r Perform hypothesis }
+t.test(len~supp, data=ToothGrowth, paired=FALSE)
+
+
+```
+
+
+Hypothesis test for subset a
+```{r Perform hypothesis 2}
+a<-subset(ToothGrowth, dose==0.5)
+b<-subset(ToothGrowth, dose==1.0)
+c<-subset(ToothGrowth, dose==2.0)
+t.test(len~supp, data=a, paired=FALSE)
+
+
+```
+
+Hypothesis test for subset b
+
+```{r Perform hypothesis 3}
+t.test(len~supp, data=b, paired=FALSE)
+
+
+```
+Hypothesis test for subset c
+```{r Perform hypothesis 4}
+t.test(len~supp, data=c, paired=FALSE)
+
+
+```
+
+
+##conclusion
+
+By running this test, we founded that as tooth size increases, the doses tend to be higher 
+
+
