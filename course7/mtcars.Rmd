@@ -1,0 +1,72 @@
+---
+title: "mtcars project"
+author: "Viraj Bhalala"
+date: "9/12/2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#opts_chunk$set(fig.width=7, fig.height=5, tidy=FALSE, size='small',width=100 )
+data(mtcars)
+
+#setwd("Desktop/coursera/")
+setwd("../course7/")
+```
+
+## Executive Summary
+In this report we will explore the relationship between a set of variables and miles per gallon. We are particulary interested in finding whether automatic or manual transmission is better for MPG and quantifying mpg difference between automatic and manual transmissions. In order to achieve this, we will be using data from 1974 edition of our Motor Trend Magazing. In this finding, we have predicted that the weight of the car was a significant confounder in our analysis and the chouse of manual or automatic depends on it.
+
+```{r data prepocessing}
+mtcars$cyl <- factor(mtcars$cyl)
+mtcars$gear <- factor(mtcars$gear)
+mtcars$vs <- factor(mtcars$vs)
+mtcars$carb <- factor(mtcars$carb)
+mtcars$am[mtcars$am =="0"] <- "automatic"
+mtcars$am[mtcars$am =="1"] <- "manual"
+mtcars$am <- as.factor(mtcars$am)
+str(mtcars)
+
+```
+Explorartory data analysis
+```{r exploratory data analysis}
+pairs(mpg~ ., data=mtcars)
+boxplot(mpg ~ am, data = mtcars, col = "red", ylab = "miles per gallon")
+
+```
+
+
+```{r best model}
+library(MASS)
+fit <- lm(mpg~.,data=mtcars)
+bestmodel <- stepAIC(fit, direction="both")
+```
+Here we plot bestmodel to analyze it
+
+** Analysis
+- The points are randomly scattered without having any pattern.
+- The points on qqplot are very close to the line which indicates that the residuals forllow a normal distribution.
+- In both the Scale-Location plot and the Residuals vs Leverage plots, the points are closer to each other and none of the points are too far from the center
+
+```{r best model residuals}
+plot(bestmodel)
+plot(bestmodel, which=c(4,6))
+ summary(bestmodel)
+
+```
+
+We now use use ANOVA to do analysis of the variance for the diffrent scenarios
+
+```{r anova}
+base <- lm(mpg ~ am, data = mtcars)
+all <- lm(mpg~.,data=mtcars)
+anova(all,base,bestmodel)
+```
+```{r summary}
+summary(bestmodel)
+
+```
+Conclucsion
+
+
+According to these results, cars with a manual transmission gives better mpg than an automatic transmissio. Weight is also a major impacting variable. If we increase weight by 1000 lbs, mpg decreases by 3.48
